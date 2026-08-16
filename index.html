@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Matric Science School - Student Portal System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --primary-hover: #1e40af;
+      --secondary: #0f766e;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --danger: #dc2626;
+      --success: #16a34a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding-bottom: 40px;
+    }
+
+    header {
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+      color: white;
+      padding: 24px;
+      text-align: center;
+      border-bottom: 4px solid var(--secondary);
+    }
+
+    header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+    }
+
+    header p {
+      color: #94a3b8;
+      font-size: 0.875rem;
+      margin-top: 4px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 32px auto;
+      padding: 0 16px;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+      border-bottom: 2px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .tab-btn {
+      padding: 10px 20px;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      font-weight: 600;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 0.95rem;
+      margin-bottom: -2px;
+    }
+
+    .tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      margin-bottom: 24px;
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--primary);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    input, select {
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.1);
+    }
+
+    .btn {
+      padding: 10px 16px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background: var(--secondary);
+    }
+
+    .btn-secondary:hover {
+      background: #0d9488;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      background: #f1f5f9;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .badge-pass { background: #dcfce7; color: var(--success); }
+    .badge-fail { background: #fee2e2; color: var(--danger); }
+
+    .marks-input {
+      width: 70px;
+      padding: 4px 8px;
+    }
+
+    /* Print Styles */
+    @media print {
+      body { background: white; padding: 0; }
+      header, .nav-tabs, .admin-only, .btn { display: none !important; }
+      .container { max-width: 100%; margin: 0; padding: 0; }
+      .card { border: none; box-shadow: none; padding: 0; }
+      .marksheet-header { display: block !important; }
+    }
+
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>THE MATRIC SCIENCE SCHOOL</h1>
+    <p>Affiliated Branch School of BISE Lahore | Science Group Portal</p>
+  </header>
+
+  <div class="container">
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('enrollment')">Student Registration</button>
+      <button class="tab-btn" onclick="switchTab('portal')">Student Portal Login</button>
+      <button class="tab-btn" onclick="switchTab('admin')">Marks & Evaluation</button>
+    </div>
+
+    <!-- ENROLLMENT TAB -->
+    <div id="tab-enrollment" class="tab-content">
+      <div class="card">
+        <h2 class="card-title">Register New Student</h2>
+        <form id="enrollForm">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Full Name</label>
+              <input type="text" id="regName" required placeholder="e.g. Muhammad Ali">
+            </div>
+            <div class="form-group">
+              <label>Roll Number</label>
+              <input type="text" id="regRoll" required placeholder="e.g. 1001">
+            </div>
+            <div class="form-group">
+              <label>Password</label>
+              <input type="password" id="regPass" required placeholder="Set portal password">
+            </div>
+            <div class="form-group">
+              <label>Academic Group</label>
+              <select id="regGroup" required>
+                <option value="9th Comp Sc">9th Computer Science</option>
+                <option value="10th Comp Sc">10th Computer Science</option>
+                <option value="9th Biology">9th Biology</option>
+                <option value="10th Biology">10th Biology</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="btn" style="margin-top: 16px;">Enroll Student</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">Enrolled Students Directory</h2>
+        <table id="studentTable">
+          <thead>
+            <tr>
+              <th>Roll No</th>
+              <th>Name</th>
+              <th>Group</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- STUDENT PORTAL LOGIN TAB -->
+    <div id="tab-portal" class="tab-content hidden">
+      <div class="card" id="loginCard">
+        <h2 class="card-title">Student Portal Login</h2>
+        <form id="loginForm">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Roll Number</label>
+              <input type="text" id="loginRoll" required>
+            </div>
+            <div class="form-group">
+              <label>Password</label>
+              <input type="password" id="loginPass" required>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-secondary" style="margin-top: 16px;">Access Portal</button>
+        </form>
+      </div>
+
+      <!-- MARKSHEET VIEW -->
+      <div class="card hidden" id="marksheetCard">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h2>BISE LAHORE BOARD FORMAT MARKSHEET</h2>
+          <div>
+            <button class="btn" onclick="window.print()">Print Result</button>
+            <button class="btn btn-secondary" onclick="logoutStudent()">Logout</button>
+          </div>
+        </div>
+        
+        <div style="background: #f8fafc; padding: 16px; border-radius: 6px; margin-bottom: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div><strong>Student Name:</strong> <span id="msName"></span></div>
+          <div><strong>Roll Number:</strong> <span id="msRoll"></span></div>
+          <div><strong>Group:</strong> <span id="msGroup"></span></div>
+          <div><strong>Institution:</strong> The Matric Science School (BISE Lahore)</div>
+        </div>
+
+        <table id="marksheetTable">
+          <thead>
+            <tr>
+              <th>Subject</th>
+              <th>Total Marks</th>
+              <th>Obtained Marks</th>
+              <th>Percentage</th>
+              <th>Grade</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+
+        <div style="margin-top: 24px; padding: 16px; border: 1px solid var(--border); border-radius: 6px;" id="summaryBox">
+          <!-- Cumulative Stats Here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ADMIN MARKS MANAGEMENT TAB -->
+    <div id="tab-admin" class="tab-content hidden">
+      <div class="card">
+        <h2 class="card-title">Manage Student Marks</h2>
+        <div class="form-group" style="max-width: 300px; margin-bottom: 16px;">
+          <label>Select Student to Edit Marks</label>
+          <select id="adminStudentSelect" onchange="loadStudentMarksEditor()">
+            <option value="">-- Choose Student --</option>
+          </select>
+        </div>
+
+        <div id="marksEditor" class="hidden">
+          <table id="editorTable">
+            <thead>
+              <tr>
+                <th>Subject</th>
+                <th>Total Marks</th>
+                <th>Obtained Marks</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <button class="btn" style="margin-top: 16px;" onclick="saveMarks()">Save All Marks</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // System Data Structure
+    const SUBJECT_GROUPS = {
+      "9th Comp Sc": ["English", "Urdu", "Math", "Islamiyat", "Al Quran", "Physics", "Chemistry", "Computer Science"],
+      "10th Comp Sc": ["English", "Urdu", "Math", "Pak Studies", "Al Quran", "Physics", "Chemistry", "Computer Science"],
+      "9th Biology": ["English", "Urdu", "Math", "Islamiyat", "Al Quran", "Physics", "Chemistry", "Biology"],
+      "10th Biology": ["English", "Urdu", "Math", "Pak Studies", "Al Quran", "Physics", "Chemistry", "Biology"]
+    };
+
+    let students = JSON.parse(localStorage.getItem('tmss_students')) || [];
+    let currentLoggedInRoll = null;
+
+    // Core Initialization
+    document.addEventListener('DOMContentLoaded', () => {
+      renderStudentDirectory();
+      populateAdminDropdown();
+    });
+
+    // Navigation Switcher
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+      
+      event.target.classList.add('active');
+      document.getElementById(`tab-${tab}`).classList.remove('hidden');
+    }
+
+    // Enrollment Handler
+    document.getElementById('enrollForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const roll = document.getElementById('regRoll').value.trim();
+      
+      if (students.some(s => s.roll === roll)) {
+        alert('Roll number already registered.');
+        return;
+      }
+
+      const group = document.getElementById('regGroup').value;
+      const subjects = {};
+      
+      // Initialize default subjects and marks
+      SUBJECT_GROUPS[group].forEach(subj => {
+        subjects[subj] = { total: 75, obtained: 0 }; // Default base total
+      });
+
+      const newStudent = {
+        name: document.getElementById('regName').value.trim(),
+        roll: roll,
+        pass: document.getElementById('regPass').value,
+        group: group,
+        marks: subjects
+      };
+
+      students.push(newStudent);
+      saveData();
+      renderStudentDirectory();
+      populateAdminDropdown();
+      e.target.reset();
+      alert('Student Enrolled Successfully!');
+    });
+
+    function saveData() {
+      localStorage.setItem('tmss_students', JSON.stringify(students));
+    }
+
+    function renderStudentDirectory() {
+      const tbody = document.querySelector('#studentTable tbody');
+      tbody.innerHTML = students.map(s => `
+        <tr>
+          <td>${s.roll}</td>
+          <td>${s.name}</td>
+          <td>${s.group}</td>
+          <td><button class="btn btn-secondary" style="padding: 4px 8px; font-size:0.8rem;" onclick="deleteStudent('${s.roll}')">Delete</button></td>
+        </tr>
+      `).join('');
+    }
+
+    function deleteStudent(roll) {
+      students = students.filter(s => s.roll !== roll);
+      saveData();
+      renderStudentDirectory();
+      populateAdminDropdown();
+    }
+
+    // Login System
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const roll = document.getElementById('loginRoll').value.trim();
+      const pass = document.getElementById('loginPass').value;
+
+      const student = students.find(s => s.roll === roll && s.pass === pass);
+
+      if (student) {
+        currentLoggedInRoll = roll;
+        document.getElementById('loginCard').classList.add('hidden');
+        document.getElementById('marksheetCard').classList.remove('hidden');
+        renderMarksheet(student);
+      } else {
+        alert('Invalid Roll Number or Password.');
+      }
+    });
+
+    function logoutStudent() {
+      currentLoggedInRoll = null;
+      document.getElementById('loginCard').classList.remove('hidden');
+      document.getElementById('marksheetCard').classList.add('hidden');
+      document.getElementById('loginForm').reset();
+    }
+
+    // BISE Lahore Grading Engine
+    function calculateGrade(percentage) {
+      if (percentage >= 80) return 'A+';
+      if (percentage >= 70) return 'A';
+      if (percentage >= 60) return 'B';
+      if (percentage >= 50) return 'C';
+      if (percentage >= 40) return 'D';
+      if (percentage >= 33) return 'E';
+      return 'F';
+    }
+
+    function renderMarksheet(student) {
+      document.getElementById('msName').textContent = student.name;
+      document.getElementById('msRoll').textContent = student.roll;
+      document.getElementById('msGroup').textContent = student.group;
+
+      const tbody = document.querySelector('#marksheetTable tbody');
+      tbody.innerHTML = '';
+
+      let grandTotal = 0;
+      let grandObtained = 0;
+      let hasFailedSubject = false;
+
+      Object.entries(student.marks).forEach(([subj, data]) => {
+        const total = Number(data.total);
+        const obtained = Number(data.obtained);
+        const pct = total > 0 ? ((obtained / total) * 100).toFixed(1) : 0;
+        const isPass = pct >= 33;
+        if (!isPass) hasFailedSubject = true;
+
+        grandTotal += total;
+        grandObtained += obtained;
+
+        tbody.innerHTML += `
+          <tr>
+            <td><strong>${subj}</strong></td>
+            <td>${total}</td>
+            <td>${obtained}</td>
+            <td>${pct}%</td>
+            <td>${calculateGrade(pct)}</td>
+            <td><span class="badge ${isPass ? 'badge-pass' : 'badge-fail'}">${isPass ? 'PASS' : 'FAIL'}</span></td>
+          </tr>
+        `;
+      });
+
+      const overallPct = grandTotal > 0 ? ((grandObtained / grandTotal) * 100).toFixed(2) : 0;
+      const overallGrade = calculateGrade(overallPct);
+      const overallStatus = (!hasFailedSubject && overallPct >= 33) ? 'PASS' : 'FAIL';
+
+      document.getElementById('summaryBox').innerHTML = `
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; text-align: center;">
+          <div><div style="font-size:0.8rem; color:var(--muted)">TOTAL MARKS</div><strong>${grandObtained} / ${grandTotal}</strong></div>
+          <div><div style="font-size:0.8rem; color:var(--muted)">PERCENTAGE</div><strong>${overallPct}%</strong></div>
+          <div><div style="font-size:0.8rem; color:var(--muted)">OVERALL GRADE</div><strong>${overallGrade}</strong></div>
+          <div><div style="font-size:0.8rem; color:var(--muted)">FINAL STATUS</div>
+            <span class="badge ${overallStatus === 'PASS' ? 'badge-pass' : 'badge-fail'}" style="font-size:0.9rem">${overallStatus}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    // Admin Operations
+    function populateAdminDropdown() {
+      const select = document.getElementById('adminStudentSelect');
+      select.innerHTML = '<option value="">-- Choose Student --</option>' + 
+        students.map(s => `<option value="${s.roll}">${s.roll} - ${s.name} (${s.group})</option>`).join('');
+    }
+
+    function loadStudentMarksEditor() {
+      const roll = document.getElementById('adminStudentSelect').value;
+      const editor = document.getElementById('marksEditor');
+      
+      if (!roll) {
+        editor.classList.add('hidden');
+        return;
+      }
+
+      const student = students.find(s => s.roll === roll);
+      const tbody = document.querySelector('#editorTable tbody');
+      tbody.innerHTML = '';
+
+      Object.entries(student.marks).forEach(([subj, data]) => {
+        tbody.innerHTML += `
+          <tr>
+            <td><strong>${subj}</strong></td>
+            <td><input type="number" class="marks-input total-input" data-subj="${subj}" value="${data.total}" min="1"></td>
+            <td><input type="number" class="marks-input obt-input" data-subj="${subj}" value="${data.obtained}" min="0"></td>
+          </tr>
+        `;
+      });
+
+      editor.classList.remove('hidden');
+    }
+
+    function saveMarks() {
+      const roll = document.getElementById('adminStudentSelect').value;
+      const student = students.find(s => s.roll === roll);
+
+      const totalInputs = document.querySelectorAll('.total-input');
+      const obtInputs = document.querySelectorAll('.obt-input');
+
+      totalInputs.forEach(input => {
+        const subj = input.dataset.subj;
+        student.marks[subj].total = Number(input.value);
+      });
+
+      obtInputs.forEach(input => {
+        const subj = input.dataset.subj;
+        student.marks[subj].obtained = Number(input.value);
+      });
+
+      saveData();
+      alert('Marks updated successfully!');
+      
+      // Refresh current active views
+      if (currentLoggedInRoll === roll) {
+        renderMarksheet(student);
+      }
+    }
+  </script>
+</body>
+</html>
